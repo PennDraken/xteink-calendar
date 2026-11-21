@@ -28,8 +28,8 @@ svg { width: 18px; height: 18px; stroke-width: 1.6; flex-shrink: 0; }
 .eyebrow { font-size: 10px; font-weight: 400; letter-spacing: 1.3px; margin: 0 0 10px; color: var(--muted); }
 h1 { font: 26px/1.25 Georgia, serif; margin: 0; font-weight: 400; }
 .editor-heading .icon-button { border: none; color: var(--muted); }
-.options-bar { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 4px; padding: 4px; background: var(--subtle); border: 1px solid var(--border); border-radius: 5px; margin: 0 -18px 29px; }
-.tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.options-bar { display: grid; gap: 4px; padding: 4px; background: var(--subtle); border: 1px solid var(--border); border-radius: 5px; margin: 0 -18px 29px; }
+.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
 .tab, .options-export { background: transparent; border-radius: 3px; display: flex; justify-content: center; align-items: center; gap: 6px; height: 37px; padding: 0 2px; color: var(--muted); font-size: 12px; }
 .tab.active { background: var(--fg); color: var(--bg); }
 .options-export { color: var(--fg); border-left: 1px solid var(--border); }
@@ -50,7 +50,11 @@ h2 { font-size: 13px; font-weight: 600; margin: 0; }
 .orientation-options input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .orientation-options label:has(input:checked) { background: var(--fg); color: var(--bg); }
 .orientation-options label:has(input:focus-visible) { outline: 2px solid var(--fg); outline-offset: 2px; }
-select, input[type="number"], input[type="text"] { width: 100%; border: 1px solid var(--border); border-radius: 4px; height: 42px; padding: 0 12px; background: var(--bg); }
+select, input[type="number"], input[type="text"], input[type="date"] { width: 100%; min-width: 0; border: 1px solid var(--border); border-radius: 4px; height: 42px; padding: 0 12px; background: var(--bg); }
+.export-actions { display: flex; flex-direction: column; gap: 10px; }
+.export-save { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; border: 1px solid var(--border); border-radius: 4px; background: var(--subtle); font-size: 12px; }
+.export-save:disabled { opacity: .45; cursor: default; }
+.export-status { display: block; margin-top: 14px; white-space: normal; }
 select { cursor: pointer; }
 .slider-field { margin-bottom: 24px; }
 .slider-label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 13px; }

@@ -23,8 +23,8 @@
         <button class="tab active" id="tab-layout" role="tab" aria-label="Layout" title="Layout" aria-selected="true" aria-controls="panel-layout" data-panel="layout"><i data-lucide="panels-top-left"></i><span>Layout</span></button>
         <button class="tab" id="tab-image" role="tab" aria-label="Image" title="Image" aria-selected="false" aria-controls="panel-image" tabindex="-1" data-panel="image"><i data-lucide="image"></i><span>Image</span></button>
         <button class="tab" id="tab-type" role="tab" aria-label="Type" title="Type" aria-selected="false" aria-controls="panel-type" tabindex="-1" data-panel="type"><i data-lucide="type"></i><span>Type</span></button>
+        <button class="tab" id="tab-export" role="tab" aria-label="Export" title="Export" aria-selected="false" aria-controls="panel-export" tabindex="-1" data-panel="export"><i data-lucide="download"></i><span>Export</span></button>
       </nav>
-      <button class="options-export" id="export" aria-label="Export calendar as PNG" title="Export calendar as PNG"><i data-lucide="download"></i><span>Export</span></button>
       </div>
 
       <div class="editor-panels">
@@ -71,6 +71,26 @@
         <div class="slider-field"><div class="slider-label"><label for="image-position">Vertical position</label><output for="image-position" id="image-position-value">50%</output></div><input id="image-position" type="range" min="0" max="100" value="50"></div>
         <div class="switch-row"><label for="dither">Pure black & white</label><input class="switch" id="dither" type="checkbox"></div>
         </div>
+      </section>
+
+      <section class="panel" id="panel-export" role="tabpanel" aria-labelledby="tab-export" hidden>
+        <form id="export-form">
+          <fieldset class="orientation-control">
+            <legend>Export</legend>
+            <div class="orientation-options">
+              <label><input type="radio" name="export-mode" value="current"><span>Current image</span></label>
+              <label><input type="radio" name="export-mode" value="range" checked><span>Date range</span></label>
+            </div>
+          </fieldset>
+          <div id="export-dates">
+          <div class="field"><label for="export-start">Start date</label><input id="export-start" type="date" min="1900-01-01" max="2100-12-31" required></div>
+          <div class="field"><label for="export-end">End date</label><input id="export-end" type="date" min="1900-01-01" max="2100-12-31" required></div>
+          </div>
+          <div class="export-actions">
+            <button class="export-save" id="export-folder" type="submit" value="folder"><i data-lucide="folder-down"></i> Save to folder</button>
+          </div>
+          <output id="export-status" class="export-status" aria-live="polite"></output>
+        </form>
       </section>
 
       <section class="panel" id="panel-type" role="tabpanel" aria-labelledby="tab-type" hidden>

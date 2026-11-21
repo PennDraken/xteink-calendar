@@ -6,13 +6,13 @@ A static HTML, CSS, and JavaScript calendar editor. Open `index.html` in a brows
 
 - `index.html`: accessible UI components and settings panels.
 - `styles.css`: monochrome theme variables and responsive desktop/mobile layouts.
-- `app.js`: canvas rendering, settings, image uploads, month navigation, and PNG export.
+- `app.js`: canvas rendering, settings, image uploads, month navigation, and BMP folder export.
 - `assets/`: locally bundled icons, the default landscape photograph, and the transparent vector Xteink preview frame.
 - `references/`: original layout sketches.
 
 Choose Portrait or Landscape in Layout. Portrait renders and exports at 480 x 800 pixels; Landscape uses 800 x 480 pixels. Portrait places the image above the calendar, while Landscape places it to the left. The image-size slider controls height in Portrait and width in Landscape. Switching orientation preserves other settings and updates slider availability; Reset returns to Portrait. The device frame rotates for Landscape while calendar text remains upright.
 
-The preview's display size is responsive. Desktop places controls to the left of the preview. Mobile uses a viewport-height layout with an always-visible preview, independently scrolling controls, and a wide non-scrolling options bar containing the settings tabs and PNG export action. The header bar is hidden on mobile, with the theme toggle retained in the preview toolbar. Slider labels sit above the track, with values aligned right.
+The preview's display size is responsive. Desktop places controls to the left of the preview. Mobile uses a viewport-height layout with an always-visible preview, independently scrolling controls, and a wide non-scrolling options bar containing Layout, Image, Type, and Export tabs. The header bar is hidden on mobile, with the theme toggle retained in the preview toolbar. Slider labels sit above the track, with values aligned right.
 
 On mobile, reset, enlarge, and theme controls move into a vertical rail beside the preview when the existing gutter has enough room. This removes the top toolbar row without reducing the canvas size. Narrow layouts retain the compact top toolbar, and placement is recalculated on resize and when the preview is enlarged.
 
@@ -20,7 +20,9 @@ Light/dark mode follows the system preference on first visit and remembers an ex
 
 Slider ranges remain fixed. Unavailable portions of the margins, image size, calendar spacing, month/year size, date size, and image corner radius tracks are greyed out based on the current layout. Mouse, touch, and keyboard changes stop at the available limit and change only the active slider, never other slider values. Limits account for orientation, image size, margins, month rows, typography, and footer. Changing months or toggles preserves existing values; values that no longer fit are marked unavailable rather than silently reduced. Hover tooltips and accessible value text report the current limits.
 
-Change `defaults` in `app.js` to customize the initial calendar. Theme tokens are defined at the top of `styles.css`. Uploads stay in the browser; no data is sent to a server. Export produces a PNG named `xteink-YYYY-MM.png`.
+Change `defaults` in `app.js` to customize the initial calendar. Theme tokens are defined at the top of `styles.css`. Uploads stay in the browser; no data is sent to a server.
+
+The Export tab offers Current image and Date range modes, with Date range selected by default. Current image hides the date fields and downloads the displayed calendar directly as a month-named BMP, such as `November.bmp`, without needing folder access. Date range provides start and end dates, defaulting to today through December 31 of next year. Every month touched by the inclusive range exports as a full calendar in uncompressed 8-bit grayscale BMP format, at the selected orientation's dimensions. Save to folder opens a directory picker and writes month-named files into year subfolders, for example `2026/November.bmp` and `2027/November.bmp`. Existing files with matching paths are overwritten. Monthly image overrides and all shared design settings apply; exporting restores the displayed month and year. Folder saving requires a browser supporting the File System Access directory picker, such as desktop Chromium, and is disabled where unavailable. No ZIP or individual-download fallback is included for date ranges.
 
 Monthly images is off by default in the Image tab. When enabled, its month selector and previous/next buttons change the preview month without changing the year, wrapping between December and January. Uploads then apply only to the selected month, across all years. Months without an override use the single image chosen with Monthly images off. The remove button clears the selected month's override. Image size, rounded corners, and treatment settings stay shared. Turning monthly mode off preserves overrides; Reset clears them and restores the default photograph. Uploaded images and overrides last only for the current page session.
 
@@ -36,4 +38,4 @@ Month and year are preview state, selected through the settings cog beside the e
 - Icons: [Lucide](https://lucide.dev), pinned at 0.468.0, [ISC License](https://github.com/lucide-icons/lucide/blob/main/LICENSE).
 - Interface typography: DM Sans and DM Mono from Google Fonts. Fonts are optional external requests; local serif, sans-serif, and monospace fallbacks keep the editor usable offline.
 
-The reference sketches are not used as runtime assets. `assets/xteink-frame.svg` is a clean vector trace of `references/xteink.png`, with a transparent background and screen opening adjusted to the wallpaper's 3:5 aspect ratio. The live canvas sits inside this opening; the device frame is preview-only and is not included in PNG exports.
+The reference sketches are not used as runtime assets. `assets/xteink-frame.svg` is a clean vector trace of `references/xteink.png`, with a transparent background and screen opening adjusted to the wallpaper's 3:5 aspect ratio. The live canvas sits inside this opening; the device frame is preview-only and is not included in BMP exports.

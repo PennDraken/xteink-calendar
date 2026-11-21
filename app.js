@@ -414,16 +414,119 @@ const previewToolsObserver = new ResizeObserver(updatePreviewTools);
 previewToolsObserver.observe(workspace);
 previewToolsObserver.observe(canvasStage);
 
-get('export').addEventListener('click', () => {
-  canvas.toBlob((blob) => {
-    if (!blob) { notify('Export failed. Please try again.'); return; }
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = `xteink-${get('year').value}-${String(Number(get('month').value) + 1).padStart(2, '0')}.png`;
-    link.href = url;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    notify('Calendar exported. Ready for your next chapter.');
-  }, 'image/png');
+function encodeBmp(imageData) {
+  const { width, height, data } = imageData;
+  const rowSize = Math.ceil(width / 4) * 4;
+  const pixelOffset = 14 + 40 + 256 * 4;
+  const bytes = new Uint8Array(pixelOffset + rowSize * height);
+  const header = new DataView(bytes.buffer);
+  header.setUint16(0, 0x4d42, true);
+  header.setUint32(2, bytes.length, true);
+  header.setUint32(10, pixelOffset, true);
+  header.setUint32(14, 40, true);
+  header.setInt32(18, width, true);
+  header.setInt32(22, height, true);
+  header.setUint16(26, 1, true);
+  header.setUint16(28, 8, true);
+  header.setUint32(34, rowSize * height, true);
+  header.setUint32(46, 256, true);
+  for (let shade = 0; shade < 256; shade++) {
+    bytes.fill(shade, 54 + shade * 4, 54 + shade * 4 + 3);
+  }
+  for (let row = 0; row < height; row++) {
+    for (let column = 0; column < width; column++) {
+      const source = (row * width + column) * 4;
+      bytes[pixelOffset + (height - 1 - row) * rowSize + column] = Math.round(data[source] * .299 + data[source + 1] * .587 + data[source + 2] * .114);
+    }
+  }
+  return bytes;
+}
+
+function createCalendarFiles(start, end) {
+  const originalMonth = get('month').value;
+  const originalYear = get('year').value;
+  const files = {};
+  const [startYear, startMonth] = start.split('-').map(Number);
+  const [endYear, endMonth] = end.split('-').map(Number);
+  try {
+    for (let index = startYear * 12 + startMonth - 1; index <= endYear * 12 + endMonth - 1; index++) {
+      const year = Math.floor(index / 12);
+      const month = index % 12;
+      get('month').value = month;
+      get('year').value = year;
+      render();
+      files[`${year}/${monthNames[month]}.bmp`] = encodeBmp(context.getImageData(0, 0, canvas.width, canvas.height));
+    }
+  } finally {
+    get('month').value = originalMonth;
+    get('year').value = originalYear;
+    render();
+  }
+  return files;
+}
+
+const today = new Date();
+const dateValue = (year, month, day) => `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+get('export-start').value = dateValue(today.getFullYear(), today.getMonth() + 1, today.getDate());
+get('export-end').value = dateValue(today.getFullYear() + 1, 12, 31);
+const folderExportAvailable = typeof window.showDirectoryPicker === 'function';
+get('export-folder').disabled = !folderExportAvailable;
+if (!folderExportAvailable) get('export-status').value = 'Folder saving is unavailable in this browser.';
+function validateExportRange() {
+  get('export-end').setCustomValidity(get('export-end').value < get('export-start').value ? 'End date must be on or after start date.' : '');
+}
+['export-start', 'export-end'].forEach((id) => get(id).addEventListener('input', validateExportRange));
+function updateExportMode() {
+  const current = document.querySelector('input[name="export-mode"]:checked').value === 'current';
+  get('export-dates').hidden = current;
+  ['export-start', 'export-end'].forEach((id) => { get(id).disabled = current; });
+  get('export-folder').disabled = !current && !folderExportAvailable;
+  get('export-folder').innerHTML = current ? '<i data-lucide="download"></i> Download BMP' : '<i data-lucide="folder-down"></i> Save to folder';
+  get('export-status').value = !current && !folderExportAvailable ? 'Folder saving is unavailable in this browser.' : '';
+  if (window.lucide) window.lucide.createIcons();
+}
+document.querySelectorAll('input[name="export-mode"]').forEach((input) => input.addEventListener('input', updateExportMode));
+get('export-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  validateExportRange();
+  if (!get('export-form').reportValidity()) return;
+  const start = get('export-start').value;
+  const end = get('export-end').value;
+  const current = document.querySelector('input[name="export-mode"]:checked').value === 'current';
+  get('export-folder').disabled = true;
+  document.querySelectorAll('input[name="export-mode"]').forEach((input) => { input.disabled = true; });
+  get('export-status').value = 'Exporting...';
+  try {
+    const directory = current ? null : await window.showDirectoryPicker({ mode: 'readwrite' });
+    await document.fonts.ready;
+    if (pendingImages.size) throw new Error('An image is still loading. Please try again.');
+    if (current) {
+      render();
+      const bytes = encodeBmp(context.getImageData(0, 0, canvas.width, canvas.height));
+      const url = URL.createObjectURL(new Blob([bytes], { type: 'image/bmp' }));
+      const link = document.createElement('a');
+      link.download = `${monthNames[Number(get('month').value)]}.bmp`;
+      link.href = url;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      get('export-status').value = '1 BMP file downloaded.';
+      return;
+    }
+    const files = createCalendarFiles(start, end);
+    for (const [path, bytes] of Object.entries(files)) {
+      const [year, name] = path.split('/');
+      const yearDirectory = await directory.getDirectoryHandle(year, { create: true });
+      const file = await yearDirectory.getFileHandle(name, { create: true });
+      const writable = await file.createWritable();
+      try { await writable.write(bytes); await writable.close(); }
+      catch (error) { await writable.abort().catch(() => {}); throw error; }
+    }
+    get('export-status').value = `${Object.keys(files).length} BMP files exported.`;
+  } catch (error) {
+    get('export-status').value = error.name === 'AbortError' ? 'Export cancelled.' : `Export failed: ${error.message}`;
+  } finally {
+    get('export-folder').disabled = !current && !folderExportAvailable;
+    document.querySelectorAll('input[name="export-mode"]').forEach((input) => { input.disabled = false; });
+  }
 });
 reset();
