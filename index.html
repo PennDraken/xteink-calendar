@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Xteink — Calendar studio</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="assets/lucide.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <a class="brand" href="./" aria-label="Xteink home">xteink<span class="brand-dot">.</span></a>
+    <span class="header-title">CALENDAR STUDIO</span>
+    <button class="icon-button" id="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode"><i data-lucide="moon"></i></button>
+  </header>
+
+  <main class="workspace">
+    <aside class="editor" aria-label="Calendar settings">
+      <div class="options-bar">
+      <nav class="tabs" aria-label="Settings categories" role="tablist">
+        <button class="tab active" id="tab-layout" role="tab" aria-label="Layout" title="Layout" aria-selected="true" aria-controls="panel-layout" data-panel="layout"><i data-lucide="panels-top-left"></i><span>Layout</span></button>
+        <button class="tab" id="tab-image" role="tab" aria-label="Image" title="Image" aria-selected="false" aria-controls="panel-image" tabindex="-1" data-panel="image"><i data-lucide="image"></i><span>Image</span></button>
+        <button class="tab" id="tab-type" role="tab" aria-label="Type" title="Type" aria-selected="false" aria-controls="panel-type" tabindex="-1" data-panel="type"><i data-lucide="type"></i><span>Type</span></button>
+      </nav>
+      <button class="options-export" id="export" aria-label="Export calendar as PNG" title="Export calendar as PNG"><i data-lucide="download"></i><span>Export</span></button>
+      </div>
+
+      <div class="editor-panels">
+      <section class="panel" id="panel-layout" role="tabpanel" aria-labelledby="tab-layout">
+        <fieldset class="orientation-control">
+          <legend>Orientation</legend>
+          <div class="orientation-options">
+            <label><input type="radio" name="orientation" value="portrait" checked><i data-lucide="rectangle-vertical"></i><span>Portrait</span></label>
+            <label><input type="radio" name="orientation" value="landscape"><i data-lucide="rectangle-horizontal"></i><span>Landscape</span></label>
+          </div>
+        </fieldset>
+        <div class="field"><label for="week-start">Week starts on</label><select id="week-start"><option value="1">Monday</option><option value="0">Sunday</option></select></div>
+        <div class="switch-row"><label for="show-week-numbers">Week numbers</label><input class="switch" id="show-week-numbers" type="checkbox" checked></div>
+        <div class="switch-row"><label for="show-adjacent-dates">Adjacent month dates</label><input class="switch" id="show-adjacent-dates" type="checkbox"></div>
+        <div class="section-heading divided"><h2>Composition</h2><span>02</span></div>
+        <div class="slider-field"><div class="slider-label"><label for="image-height">Image height</label><output for="image-height" id="image-height-value">28%</output></div><input id="image-height" type="range" min="0" max="70" value="28"></div>
+        <div class="slider-field"><div class="slider-label"><label for="margin-horizontal">Horizontal margin</label><output for="margin-horizontal" id="margin-horizontal-value">0 px</output></div><input id="margin-horizontal" type="range" min="0" max="56" value="0"></div>
+        <div class="slider-field"><div class="slider-label"><label for="margin-vertical">Vertical margin</label><output for="margin-vertical" id="margin-vertical-value">0 px</output></div><input id="margin-vertical" type="range" min="0" max="240" value="0"></div>
+        <div class="slider-field"><div class="slider-label"><label for="spacing">Calendar spacing</label><output for="spacing" id="spacing-value">8 px</output></div><input id="spacing" type="range" min="8" max="44" value="8"></div>
+        <div class="switch-row"><label for="show-lines">Calendar grid lines</label><input class="switch" id="show-lines" type="checkbox" checked></div>
+        <div class="switch-row"><label for="invert">Invert canvas colors</label><input class="switch" id="invert" type="checkbox"></div>
+        <div class="switch-row"><label for="show-note">Footer note</label><input class="switch" id="show-note" type="checkbox"></div>
+        <div class="field note-field" hidden><label for="note">A little reminder</label><input id="note" type="text" value="Make room for the little things." maxlength="60"></div>
+      </section>
+
+      <section class="panel" id="panel-image" role="tabpanel" aria-labelledby="tab-image" hidden>
+        <div class="switch-row"><label for="monthly-images">Monthly images</label><input class="switch" id="monthly-images" type="checkbox" aria-controls="monthly-image-controls" aria-expanded="false"></div>
+        <div id="monthly-image-controls" hidden>
+          <label class="image-month-label" for="image-month">Month</label>
+          <div class="image-month-controls">
+            <button class="icon-button" id="image-month-previous" aria-label="Previous image month" title="Previous image month"><i data-lucide="chevron-left"></i></button>
+            <select id="image-month" aria-label="Image month"></select>
+            <button class="icon-button" id="image-month-next" aria-label="Next image month" title="Next image month"><i data-lucide="chevron-right"></i></button>
+            <button class="icon-button" id="image-month-remove" aria-label="Remove monthly image" title="Remove monthly image"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <label class="upload" for="image-upload"><img src="assets/mountains.jpg" id="image-thumbnail" alt="Mountain landscape"><span><i data-lucide="upload"></i> Choose image</span><input type="file" id="image-upload" accept="image/*"></label>
+        <div class="switch-row"><label for="image-enabled">Image enabled</label><input class="switch" id="image-enabled" type="checkbox" checked></div>
+        <div class="slider-field"><div class="slider-label"><label for="image-radius">Rounded corners</label><output for="image-radius" id="image-radius-value">8 px</output></div><input id="image-radius" type="range" min="0" max="64" value="8"></div>
+        <div class="switch-row image-treatment-toggle"><label for="show-image-treatment">Image treatment</label><input class="switch" id="show-image-treatment" type="checkbox" aria-controls="image-treatment" aria-expanded="false"></div>
+        <div id="image-treatment" hidden>
+        <div class="slider-field"><div class="slider-label"><label for="brightness">Brightness</label><output for="brightness" id="brightness-value">100%</output></div><input id="brightness" type="range" min="50" max="150" value="100"></div>
+        <div class="slider-field"><div class="slider-label"><label for="contrast">Contrast</label><output for="contrast" id="contrast-value">110%</output></div><input id="contrast" type="range" min="50" max="180" value="110"></div>
+        <div class="slider-field"><div class="slider-label"><label for="image-position">Vertical position</label><output for="image-position" id="image-position-value">50%</output></div><input id="image-position" type="range" min="0" max="100" value="50"></div>
+        <div class="switch-row"><label for="dither">Pure black & white</label><input class="switch" id="dither" type="checkbox"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-type" role="tabpanel" aria-labelledby="tab-type" hidden>
+        <div class="section-heading"><h2>Set the tone</h2><span>01</span></div>
+        <div class="field"><label for="font">Typeface</label><select id="font"><option value="serif" selected>Editorial serif</option><option value="sans-serif">Clean sans</option><option value="monospace">Monospace</option></select></div>
+        <div class="slider-field"><div class="slider-label"><label for="title-size">Month title</label><output for="title-size" id="title-size-value">62 px</output></div><input id="title-size" type="range" min="28" max="62" value="62"></div>
+        <div class="slider-field"><div class="slider-label"><label for="year-size">Year title</label><output for="year-size" id="year-size-value">28 px</output></div><input id="year-size" type="range" min="28" max="62" value="28"></div>
+        <div class="slider-field"><div class="slider-label"><label for="date-size">Date size</label><output for="date-size" id="date-size-value">48 px</output></div><input id="date-size" type="range" min="16" max="48" value="48"></div>
+      </section>
+      </div>
+    </aside>
+
+    <section class="preview" aria-label="Calendar preview">
+      <div class="preview-toolbar"><button class="icon-button" id="reset" aria-label="Reset design" title="Reset design"><i data-lucide="rotate-ccw"></i></button><button class="icon-button" id="preview-expand" aria-label="Enlarge preview" title="Enlarge preview" aria-pressed="false"><i data-lucide="maximize-2"></i></button><button class="icon-button" id="preview-settings-toggle" popovertarget="preview-settings" aria-label="Preview settings" title="Preview settings" aria-expanded="false"><i data-lucide="settings"></i></button></div>
+      <div class="preview-settings" id="preview-settings" popover aria-labelledby="preview-settings-heading">
+        <div class="section-heading"><h2 id="preview-settings-heading">Preview settings</h2><button class="icon-button" popovertarget="preview-settings" popovertargetaction="hide" aria-label="Close preview settings" title="Close preview settings"><i data-lucide="x"></i></button></div>
+        <div class="input-row"><div class="field"><label for="month">Month</label><select id="month"></select></div><div class="field year-field"><label for="year">Year</label><input id="year" type="number" min="1900" max="2100" value="2026"></div></div>
+        <fieldset class="device-colors">
+          <legend>Device color</legend>
+          <label><input type="radio" name="device-color" id="device-white" value="white" checked>White</label>
+          <label><input type="radio" name="device-color" id="device-black" value="black">Black</label>
+        </fieldset>
+      </div>
+      <div class="canvas-stage"><div class="device-preview"><canvas id="calendar" width="480" height="800" aria-label="November 2026 calendar preview"></canvas><img class="device-frame" src="assets/xteink-frame.svg" alt="" aria-hidden="true"><svg class="device-screen-outline" viewBox="0 0 187 307" fill="none" aria-hidden="true"><rect x="17.4" y="15.4" width="151.2" height="251.2" rx="2.6" stroke-width="1.2"/></svg></div></div>
+    </section>
+  </main>
+  <div id="toast" role="status" class="toast" hidden></div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+Following configuration parameters should be available
+- Calendar number weight
+- Calendar grid vertical stroke width
+- Calendar grid horisontal stroke width
+- Month title
+    - Enabled
+    - Size
+    - Thickness
+    - Centered/ Left/ Right
+- Year title
+    - Enabled
+    - Size
+    - Thickness
+    - Centered/ Left/ Right
+- 
